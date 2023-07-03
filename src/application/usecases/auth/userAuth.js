@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt'
 
-export const userSignUp = (userRepository,username,email,password) => {
-    console.log(password)
+export const userSignUp = (userRepository,username,email,password,service) => {
     return new Promise(async (resolve, reject) => {
 
         const [emailValid, usernameValid] = await Promise.all([
@@ -15,7 +14,7 @@ export const userSignUp = (userRepository,username,email,password) => {
         if (usernameValid) {
             reject({ message: 'username already exists' })
         }
-        const hashedPassword = await bcrypt.hash(password, 10)
+        const hashedPassword = await service.hashedPassword(password,10)
         const data = await userRepository.addUser({
             email,
             username,
@@ -28,8 +27,7 @@ export const userSignUp = (userRepository,username,email,password) => {
     })
 }
 
-export const userLogin = (userRepository, username, password) => {
-    console.log(username,password)
+export const userLogin = (userRepository, username, password,service) => {
     return new Promise(async (resolve, reject) => {
         const userCheck = await userRepository.getByName(username)
         const passwordCheck = await bcrypt.compare(password,userCheck.password)
@@ -41,9 +39,13 @@ export const userLogin = (userRepository, username, password) => {
         }
 
         if (password && userCheck) {
-            const data = userCheck.toObject({ getters: true, versionKey: false });
-            delete data.password;
+            const data = userCheck.toObject({ getters: true, versionKey: false })
+            const token = await service.createToken(data,process.env.JWT_SECRET)
+            delete data.password
             delete data.id
+            data.status = 'success'
+            data.message = 'user verified'
+            data.token = token
             resolve(data)
         }
     })
