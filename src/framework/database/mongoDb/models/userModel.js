@@ -11,7 +11,7 @@ const userSchema = new Schema({
     email: {
         type: String,
         required: true,
-        unique: truea
+        unique: true
     },
     password: {
         type: String,
@@ -28,4 +28,4 @@ const userSchema = new Schema({
 })
 
 const UserModel = model('User', userSchema)
-export default userSchema
+export default UserModel
