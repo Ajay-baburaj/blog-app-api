@@ -3,6 +3,7 @@ import cors from 'cors'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import router from './framework/webserver/routes/index.js'
+import errorHandlingMidlleware from './framework/webserver/middlewares/errorHandlingMiddleware.js'
 
 dotenv.config()
 const app = express()
@@ -24,6 +25,11 @@ mongoose.connect(process.env.MONGO_URL,{
 
 router(app)
 
+app.use(errorHandlingMidlleware)
+
+app.all('*',(req,res,next)=>{
+    next(new AppError('Not found',404))
+})
 
 app.listen(process.env.PORT,()=>{
     console.log(`port is running at ${process.env.PORT}`)
