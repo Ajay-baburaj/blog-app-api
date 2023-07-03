@@ -3,8 +3,7 @@ import authRoute from './authRoute.js';
 
 
 const router =(app)=>{
-    
-    app.use('/api',authRoute())
+    app.use('/api/v1',authRoute())
 }
 
 
