@@ -1,6 +1,7 @@
 import AppError from "../../../utils/appError.js";
 
 const errorHandlingMidlleware=(err=AppError, req, res, next)=>{
+    console.log("call is coming inside this middlewatre")
     err.statusCode = err.statusCode || 500;
     err.status = err.status || 'error';
     if (err.statusCode === 404) {
