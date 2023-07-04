@@ -1,5 +1,5 @@
+import mongoose from 'mongoose'
 import Post from '../models/postModel.js'
-import User from '../models/userModel.js'
 
 export const postRepositoryMongoDB =()=>{
     
@@ -7,7 +7,20 @@ export const postRepositoryMongoDB =()=>{
         return Post.create(data)
     }
 
+    const deletePost = async(filter)=>{
+        return Post.deleteOne(filter)
+    }
+
+    const updatePost = async()=>{
+
+    }
+
+    const getAllPost = ()=>{
+        return Post.find({})
+    }
+
     return{
-        createPost
+        createPost,
+        deletePost,
     }
 }

@@ -11,8 +11,10 @@ export const verifyUser = (req, res, next) => {
             next(new AppError('Invalid Token', HttpStatus.UNAUTHORIZED))
         } const {user} = jwt.verify(token, process.env.JWT_SECRET);
         req.userId = user;
-        next();
+        return next();
+        console.log('call is coming after next')
     } else {
+        console.log('cll hre')
         next(new AppError('Access token not found', HttpStatus.FORBIDDEN))
     }
 }

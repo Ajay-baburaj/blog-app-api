@@ -5,7 +5,7 @@ import { verifyUser } from "../middlewares/verifyUser.js"
 
 const postRoutes = () => {
     const router = express.Router()
-    router.post('/create/post',verifyUser,multerMiddleWare().upload.single('image'),
+    router.post('/create/post',verifyUser,multerMiddleWare().upload.any('image'),
         postController().createPost)
 
     return router
