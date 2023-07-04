@@ -11,22 +11,23 @@ const authController = () => {
     const user = userRepository(userRepositoryMongoDB())
     const service = authServiceInterface(authServices())
 
-    const signup = async (req, res) => {
+    const signup = async (req, res,next) => {
         const { email, username, password} = req.body
         userSignUp(user,username,email,password,service).then((response)=>{
             res.status(200).json(response)
         }).catch((err)=>{
-            throw new AppError(err.message,HttpStatus.UNAUTHORIZED)
+            next(new AppError(err.message,HttpStatus.UNAUTHORIZED)) 
         })
     
     }
 
-    const login = async (req, res) => {
+    const login = async(req,res,next) => {
         const { username, password } = req.body
+        console.log(req.body)
         userLogin(user, username, password,service).then((response) => {
             res.status(200).json(response)
         }).catch((err) => {
-         throw new AppError(err.message,HttpStatus.UNAUTHORIZED)
+            next (new AppError(err.message,HttpStatus.UNAUTHORIZED)) 
         })
     }
     return {

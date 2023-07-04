@@ -11,7 +11,7 @@ export const authServices = () => {
     }
 
     const createToken = async (user) => {
-        return jwt.sign({ user }, process.env.JWT_SECRET)
+        return jwt.sign({user},process.env.JWT_SECRET)
     }
 
     const verifyJwt = (token, secretKey) => {

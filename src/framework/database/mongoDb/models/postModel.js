@@ -4,7 +4,8 @@ const { Schema } = mongoose;
 
 const postSchema = new Schema({
     author: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref:'User',
         required: true,
     },
     title: {
@@ -17,11 +18,7 @@ const postSchema = new Schema({
         required: true,
         minlength: 12,
     },
-    images: [
-        {
-            type: String,
-        },
-    ],
+    image: String,
     createdAt: {
         type: Date,
         default: Date.now(),
