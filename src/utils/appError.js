@@ -1,9 +1,6 @@
 import HttpStatus from "../utils/httpStatus.js";
 
 class AppError extends Error {
-    HttpStatus;
-    status;
-    isOperational;
     constructor(message,HttpStatus) {
         super(message);
         this.HttpStatus = HttpStatus;
