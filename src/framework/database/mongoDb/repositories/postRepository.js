@@ -11,6 +11,10 @@ export const postRepositoryMongoDB =()=>{
         return Post.deleteOne(filter)
     }
 
+    const getPostById = async(postId)=>{
+        return Post.findById(postId)
+    }
+
     const updatePost = async()=>{
 
     }
@@ -22,5 +26,6 @@ export const postRepositoryMongoDB =()=>{
     return{
         createPost,
         deletePost,
+        getPostById
     }
 }
