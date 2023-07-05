@@ -4,7 +4,7 @@ import Post from '../models/postModel.js'
 export const postRepositoryMongoDB =()=>{
     
     const createPost = async(data)=>{
-        return Post.create(data)
+        return await Post.create(data)
     }
 
     const deletePost = async(filter)=>{
@@ -12,20 +12,19 @@ export const postRepositoryMongoDB =()=>{
     }
 
     const getPostById = async(postId)=>{
-        return Post.findById(postId)
+        return await Post.findById(postId)
     }
 
-    const updatePost = async()=>{
-
+    const updatePost = async(postId,title,content)=>{
+      return await Post.findByIdAndUpdate(postId,{title,content},{new:true})   
     }
 
-    const getAllPost = ()=>{
-        return Post.find({})
-    }
+    
 
     return{
         createPost,
         deletePost,
-        getPostById
+        getPostById,
+        updatePost
     }
 }
