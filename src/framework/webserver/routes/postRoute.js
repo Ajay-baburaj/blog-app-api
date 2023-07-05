@@ -7,6 +7,8 @@ const postRoutes = () => {
     const router = express.Router()
     router.post('/create/post',verifyUser,multerMiddleWare().upload.any('image'),
         postController().createPost)
+    router.delete('/delete/post/:id',verifyUser,postController().deletePost)
+    router.get('/post/:id',verifyUser,postController().getSingleBlog)    
 
     return router
 }

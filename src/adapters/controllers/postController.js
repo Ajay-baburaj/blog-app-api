@@ -1,7 +1,7 @@
 import { postRepository } from "../../application/repository/postInterface.js"
 import { userRepository } from "../../application/repository/userInterface.js"
 import { s3serviceInterface } from "../../application/services/s3serviceInterface.js"
-import { createBlogPost } from "../../application/usecases/post/blogPost.js"
+import { createBlogPost, deleteBlogPost, getSinglePost } from "../../application/usecases/post/blogPost.js"
 import { postRepositoryMongoDB } from "../../framework/database/mongoDb/repositories/postRepository.js"
 import { userRepositoryMongoDB } from "../../framework/database/mongoDb/repositories/userRepository.js"
 import { s3services } from "../../framework/services/s3services.js"
@@ -19,11 +19,28 @@ const postController = () => {
             res.status(200).json(response)
         }).catch((err) => {
             next(new AppError(err.message, HttpStatus.UNAUTHORIZED))
-        })       
+        })
+    }
+    const getSingleBlog = async (req, res, next) => {
+        getSinglePost(req.userId, req.params.id, post, s3service, user).then((response) => {
+            res.status(200).json(response)
+        }).catch((err) => {
+            next(new AppError(err.message, HttpStatus.UNAUTHORIZED))
+        })
+    }
+
+    const deletePost = async (req, res, next) => {
+        deleteBlogPost(req.userId, req.params.id, post, s3service).then((response) => {
+            res.status(200).json(response)
+        }).catch((err) => {
+            next(new AppError(err.message, HttpStatus.UNAUTHORIZED))
+        })
     }
 
     return {
-        createPost
+        createPost,
+        deletePost,
+        getSingleBlog
     }
 }
 
