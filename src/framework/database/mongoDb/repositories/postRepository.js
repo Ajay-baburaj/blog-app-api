@@ -1,4 +1,3 @@
-import mongoose from 'mongoose'
 import Post from '../models/postModel.js'
 
 export const postRepositoryMongoDB =()=>{
@@ -15,16 +14,24 @@ export const postRepositoryMongoDB =()=>{
         return await Post.findById(postId)
     }
 
-    const updatePost = async(postId,title,content)=>{
+    const editPostById = async(postId,title,content)=>{
       return await Post.findByIdAndUpdate(postId,{title,content},{new:true})   
     }
 
-    
+    const editPostByIdforImage = async(postId,title,content,image)=>{
+        return await Post.findByIdAndUpdate(postId,{title,content,image},{new:true})
+    }
+
+    const getAllPosts = async()=>{
+        return await Post.find()
+    }
 
     return{
         createPost,
         deletePost,
         getPostById,
-        updatePost
+        editPostById,
+        getAllPosts,
+        editPostByIdforImage
     }
 }

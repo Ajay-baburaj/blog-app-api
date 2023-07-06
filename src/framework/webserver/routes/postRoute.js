@@ -8,7 +8,9 @@ const postRoutes = () => {
     router.post('/create/post',verifyUser,multerMiddleWare().upload.any('image'),
         postController().createPost)
     router.delete('/delete/post/:id',verifyUser,postController().deletePost)
-    router.get('/post/:id',verifyUser,postController().getSingleBlog)    
+    router.get('/post/:id',verifyUser,postController().getSingleBlog)
+    router.put('/edit/post/:id',multerMiddleWare().upload.any('image'),verifyUser,postController().editPost)
+    router.get('/all/posts',verifyUser,postController().getAllPost)    
 
     return router
 }

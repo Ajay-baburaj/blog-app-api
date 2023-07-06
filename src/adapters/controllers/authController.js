@@ -1,6 +1,6 @@
 import { userRepository } from "../../application/repository/userInterface.js";
 import { userRepositoryMongoDB } from "../../framework/database/mongoDb/repositories/userRepository.js";
-import { userLogin, userSignUp } from '../../application/usecases/auth/userAuth.js';
+import { generateAccesTokenFromRefresh, userLogin, userSignUp } from '../../application/usecases/auth/userAuth.js';
 import { authServiceInterface } from "../../application/services/userAuthInterface.js";
 import { authServices } from "../../framework/services/authServices.js";
 import AppError from "../../utils/appError.js";
@@ -30,9 +30,21 @@ const authController = () => {
             next (new AppError(err.message,HttpStatus.UNAUTHORIZED)) 
         })
     }
+
+    const generateAccesToken = async(req,res,next)=>{
+        const {userId,refreshToken} = req.body
+        generateAccesTokenFromRefresh(userId,refreshToken,service).then((response)=>{
+         res.status(200).json(response)
+       }).catch((err)=>{
+            next(new AppError(err.message,HttpStatus.FORBIDDEN))
+       })
+
+
+    }
     return {
         signup,
-        login
+        login,
+        generateAccesToken
     }
 
 }

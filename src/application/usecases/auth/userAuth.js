@@ -1,4 +1,6 @@
 import bcrypt from 'bcrypt'
+import dotenv from 'dotenv'
+dotenv.config()
 
 export const userSignUp = (userRepository,username,email,password,service) => {
     return new Promise(async (resolve, reject) => {
@@ -15,7 +17,7 @@ export const userSignUp = (userRepository,username,email,password,service) => {
             reject({ message: 'username already exists' })
             return
         }
-        const hashedPassword = await service.hashedPassword(password,10)
+        const hashedPassword = await service.hashedPassword(password)
         const data = await userRepository.addUser({
             email,
             username,
@@ -43,13 +45,28 @@ export const userLogin = (userRepository, username, password,service) => {
 
         if (password && userCheck) {
             const data = userCheck.toObject({ getters: true, versionKey: false })
-            const token = await service.createToken(data._id,process.env.JWT_SECRET)
+            const token = await service.createToken(data._id,process.env.JWT_SECRET,"1d")
+            const refreshToken = await service.createToken(data._id,process.env.REFRESH_SECRET,"5d")
             delete data.password
             delete data.id
             data.status = 'success'
             data.message = 'user verified'
             data.token = token
+            data.refreshToken = refreshToken
             resolve(data)
         }
+    })
+}
+
+export const generateAccesTokenFromRefresh = (userId,refreshToken,service) =>{
+    return new Promise(async(resolve,reject)=>{
+        const {expired,message} = await service.verifyJwt(refreshToken,process.env.REFRESH_SECRET)
+        if(!expired && message === 'Success'){
+            const newToken = await service.createToken(userId,process.env.JWT_SECRET)
+            resolve(newToken)
+        }else{
+            reject({status:false,message:'Invalid Token'})
+        }
+
     })
 }
