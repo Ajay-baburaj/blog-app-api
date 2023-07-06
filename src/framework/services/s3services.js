@@ -55,6 +55,7 @@ export const s3services = () => {
     }
 
     const deleteFromS3 = async (imageName) => {
+        console.log(imageName)
         const params = {
             Bucket: BUCKET_NAME,
             Key: imageName

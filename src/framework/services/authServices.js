@@ -7,24 +7,37 @@ export const authServices = () => {
         return bcrypt.compare(password, hashedPassword)
     }
     const hashedPassword = async (password) => {
-        return await bcrypt.hash(password, 10)
+        return await bcrypt.hash(password,10)
     }
 
-    const createToken = async (user) => {
-        return jwt.sign({user},process.env.JWT_SECRET,{expiresIn:'2d'})
+    const createToken = async (user,secret,time) => {
+        return jwt.sign({user},secret,{expiresIn:time})
     }
 
     const verifyJwt = (token, secretKey) => {
         try {
-            return jwt.verify(token, secretKey)
+          const decoded = jwt.verify(token, secretKey)
+          return {
+            message: "Success",
+            expired: false,
+            data: decoded // Include the decoded data in the response if verification is successful
+          };
         } catch (error) {
+          if (error instanceof jwt.TokenExpiredError) {
             return {
-                message: "Link Expired",
-                expired: true,
+              message: "Link Expired",
+              expired: true,
             }
-
+          } else {
+            return {
+              message: "Error",
+              expired: false, // Set `expired` to false for non-expiry errors
+              error: error.message // Include the error message in the response
+            }
+          }
         }
-    }
+      }
+      
     return {
         comparePassword,
         createToken,
