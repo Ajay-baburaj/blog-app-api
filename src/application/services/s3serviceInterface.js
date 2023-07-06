@@ -11,11 +11,16 @@ export const s3serviceInterface = (service)=>{
     const deleteFromS3 = async(fileName)=>{
         return await service.deleteFromS3(fileName)
     }
+
+    const changeIntoImgURL = async(postObj)=>{
+        return service.changeIntoImgURL(postObj)
+    }
     
     return{
         uploadTos3,
         getFromS3,
-        deleteFromS3
+        deleteFromS3,
+        changeIntoImgURL
     }
 }
 

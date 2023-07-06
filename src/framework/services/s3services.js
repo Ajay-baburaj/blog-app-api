@@ -72,7 +72,8 @@ export const s3services = () => {
     return {
         uploadTos3,
         getFromS3,
-        deleteFromS3
+        deleteFromS3,
+        changeIntoImgURL
     }
 
 }

@@ -21,7 +21,7 @@ export const createBlogPost = (userId, postObj, file, postRepository, s3service,
 export const getSinglePost = (userId, postId, postRepository, s3service, userRepository) => {
   return new Promise(async (resolve, reject) => {
     const fetched = await postRepository.getSinglePost(postId)
-    const postObj = fetched.length != 0 ? fetched[0] : reject({status:'Fail',message:'Data Not Found'})
+    const postObj = fetched.length != 0 ? fetched[0] : reject({ status: 'Fail', message: 'Data Not Found' })
     const imgUrl = await s3service.getFromS3(postObj?.image)
     postObj.image = imgUrl  // to display image in the frontend  
     resolve(postObj)
@@ -35,14 +35,14 @@ export const deleteBlogPost = (userId, postId, postRepository, s3service) => {
   return new Promise(async (resolve, reject) => {
     try {
       const post = await postRepository.getPostById(postId);
-      if(JSON.stringify(post.author) !== JSON.stringify(userId)){
-        reject({message:'you do not have access to delete this post'})
+      if (JSON.stringify(post.author) !== JSON.stringify(userId)) {
+        reject({ message: 'you do not have access to delete this post' })
         return
       }
       const deleted = await s3service.deleteFromS3(post.image);
-      const deletedPost = await postRepository.deletePost(new mongoose.Types.ObjectId(postId),new mongoose.Types.ObjectId(userId))
+      const deletedPost = await postRepository.deletePost(new mongoose.Types.ObjectId(postId), new mongoose.Types.ObjectId(userId))
       await postRepository.deleteCommentsByPostId(new mongoose.Types.ObjectId(postId)) //deleting the comments of deleted post
-      resolve({status:"Success",message:'Post deleted'});
+      resolve({ status: "Success", message: 'Post deleted' });
     } catch (err) {
       reject(err);
     }
@@ -75,12 +75,16 @@ export const editBlogPost = (postId, content, title, image, postRepository, s3se
   })
 }
 
-export const getAllBlogPost = (postRepository)=>{
-  return new Promise(async(resolve,reject)=>{
-    try{
-      const getPosts = await postRepository.getAllPosts()
-      resolve(getPosts)
-    }catch(err){
+export const getAllBlogPost = (postRepository, s3service) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const getPosts = await postRepository.getAllPosts();
+      const getAllPost = await Promise.all(getPosts.map(async (post) => {
+        const withImgUrl = await s3service.changeIntoImgURL(post);          
+        return withImgUrl;
+      }))
+      resolve(getAllPost)
+    } catch (err) {
       reject(err)
     }
   })

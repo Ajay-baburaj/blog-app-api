@@ -41,6 +41,12 @@ const postController = () => {
     const editPost = async(req,res,next)=>{
         const postId = req.params.id
         const {title,content} = req.body
+        console.log(title)
+        console.log(req?.files.length)
+        if(title == undefined && content == undefined  && req?.files.length == ''){
+            next(new AppError("enter some thing to edit",HttpStatus.BAD_REQUEST))
+            return
+        }
         editBlogPost(postId,content,title,req?.files?.length != 0 ? req.files[0]: undefined,post,s3service).then((response)=>{
             res.status(200).json(response)
         }).catch((err)=>{
@@ -49,7 +55,7 @@ const postController = () => {
     }
 
     const getAllPost = async(req,res,next)=>{
-        getAllBlogPost(post).then((response)=>{
+        getAllBlogPost(post,s3service).then((response)=>{
             res.status(200).json(response)
         }).catch((err)=>{
             next(new AppError(err.message,HttpStatus.UNAUTHORIZED))
