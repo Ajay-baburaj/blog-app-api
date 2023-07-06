@@ -55,13 +55,19 @@ export const s3services = () => {
     }
 
     const deleteFromS3 = async (imageName) => {
-        console.log(imageName)
         const params = {
             Bucket: BUCKET_NAME,
             Key: imageName
         }
         const command = new DeleteObjectCommand(params)
         return await s3.send(command)
+    }
+
+
+    const changeIntoImgURL = async(postObj)=>{
+        const imgUrl = await getFromS3(postObj.image)
+        postObj.image = imgUrl
+        return postObj 
     }
     return {
         uploadTos3,

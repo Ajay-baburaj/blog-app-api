@@ -20,13 +20,11 @@ export const createBlogPost = (userId, postObj, file, postRepository, s3service,
 
 export const getSinglePost = (userId, postId, postRepository, s3service, userRepository) => {
   return new Promise(async (resolve, reject) => {
-    const fetched = await postRepository.getPostById(postId)
-    const userData = await userRepository.getById(userId)
-    const imgUrl = await s3service.getFromS3(fetched.image)
-    const post = fetched.toObject()
-    post.image = imgUrl //to display image in the frontend
-    post.authorName = userData.username //to display username in the frontend
-    resolve(post)
+    const fetched = await postRepository.getSinglePost(postId)
+    const postObj = fetched.length != 0 ? fetched[0] : reject({status:'Fail',message:'Data Not Found'})
+    const imgUrl = await s3service.getFromS3(postObj?.image)
+    postObj.image = imgUrl  // to display image in the frontend  
+    resolve(postObj)
   }).catch((err) => {
     reject(err)
   })
@@ -37,12 +35,14 @@ export const deleteBlogPost = (userId, postId, postRepository, s3service) => {
   return new Promise(async (resolve, reject) => {
     try {
       const post = await postRepository.getPostById(postId);
+      if(JSON.stringify(post.author) !== JSON.stringify(userId)){
+        reject({message:'you do not have access to delete this post'})
+        return
+      }
       const deleted = await s3service.deleteFromS3(post.image);
-      const deletedPost = await postRepository.deletePost({
-        _id: new mongoose.Types.ObjectId(postId),
-        author: new mongoose.Types.ObjectId(userId),
-      });
-      resolve(deletedPost);
+      const deletedPost = await postRepository.deletePost(new mongoose.Types.ObjectId(postId),new mongoose.Types.ObjectId(userId))
+      await postRepository.deleteCommentsByPostId(new mongoose.Types.ObjectId(postId)) //deleting the comments of deleted post
+      resolve({status:"Success",message:'Post deleted'});
     } catch (err) {
       reject(err);
     }
