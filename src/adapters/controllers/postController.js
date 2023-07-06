@@ -49,7 +49,7 @@ const postController = () => {
     }
 
     const getAllPost = async(req,res,next)=>{
-        getAllBlogPost(post).then((response)=>{
+        getAllBlogPost(post,s3service).then((response)=>{
             res.status(200).json(response)
         }).catch((err)=>{
             next(new AppError(err.message,HttpStatus.UNAUTHORIZED))
