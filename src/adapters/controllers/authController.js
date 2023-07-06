@@ -23,7 +23,6 @@ const authController = () => {
 
     const login = async(req,res,next) => {
         const { username, password } = req.body
-        console.log(req.body)
         userLogin(user, username, password,service).then((response) => {
             res.status(200).json(response)
         }).catch((err) => {
