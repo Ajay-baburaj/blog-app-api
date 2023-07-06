@@ -25,7 +25,7 @@ export const CommentRepositoryMongoDB = () => {
                 .exec() // also populated post to show it on the frontend   
             return comment
         } catch (err) {
-            console.log(err.message);
+            next(err)
         }
     }
 
