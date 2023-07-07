@@ -58,12 +58,12 @@ export const userLogin = (userRepository, username, password,service) => {
     })
 }
 
-export const generateAccesTokenFromRefresh = (userId,refreshToken,service) =>{
+export const generateAccesTokenFromRefresh = (refreshToken,service) =>{
     return new Promise(async(resolve,reject)=>{
-        const {expired,message} = await service.verifyJwt(refreshToken,process.env.REFRESH_SECRET)
+        const {expired,message,data} = await service.verifyJwt(refreshToken,process.env.REFRESH_SECRET)
         if(!expired && message === 'Success'){
-            const newToken = await service.createToken(userId,process.env.JWT_SECRET)
-            resolve(newToken)
+            const newToken = await service.createToken(data.user,process.env.JWT_SECRET,"1d")
+            resolve({status:"Success",message:"new access token generated",token:newToken})
         }else{
             reject({status:false,message:'Invalid Token'})
         }

@@ -15,14 +15,7 @@ app.use(cors({origin:'*',credentials:true}))
 app.use(express.urlencoded({ extended: true }));
 
 
-mongoose.connect(process.env.MONGO_URL,{
-    useNewUrlParser:true,
-    useUnifiedTopology:true
-}).then(()=>{
-    console.log('database connected successfully')
-}).catch((err)=>{
-    console.log(err.message)
-})
+connectDatabase()
 
 router(app)
 

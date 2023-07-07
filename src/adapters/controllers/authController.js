@@ -31,8 +31,8 @@ const authController = () => {
     }
 
     const generateAccesToken = async(req,res,next)=>{
-        const {userId,refreshToken} = req.body
-        generateAccesTokenFromRefresh(userId,refreshToken,service).then((response)=>{
+        const {refreshToken} = req.body
+        generateAccesTokenFromRefresh(refreshToken,service).then((response)=>{
          res.status(200).json(response)
        }).catch((err)=>{
             next(new AppError(err.message,HttpStatus.FORBIDDEN))
